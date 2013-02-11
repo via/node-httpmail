@@ -1,0 +1,34 @@
+{
+  "author": "Ian Good <ian.good@rackspace.com>",
+  "name": "httpmail",
+  "description": "Serves email similar to IMAP to stateless HTTP clients.",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.rackspace.com:ian-good/node-httpmail.git"
+  },
+  "main": "lib/httpmail.js",
+  "scripts": {
+    "test": "vows test/*"
+  },
+  "dependencies": {
+    "restify": "*",
+    "redis": "*",
+    "mailparser": "*",
+    "node-uuid": "*"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  },
+
+  "config": {
+    "rackspaceCloud": {
+      "username": "foo",
+      "apiKey": "bar",
+      "authUrl": "https://auth.api.rackspacecloud.com/v1.0",
+      "container": "messages"
+    }
+  }
+}
