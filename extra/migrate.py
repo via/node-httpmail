@@ -2,21 +2,27 @@
 
 import sys
 import urllib2
-import getpass, imaplib
+import getpass
+import imaplib
 
-user = sys.argv[1]
-folder = sys.argv[2]
-try:
-    host = sys.argv[3]
-except IndexError:
+
+imap_host = raw_input('IMAPS Server: ')
+user = raw_input('IMAP Username: ')
+folder = raw_input('IMAP Folder [INBOX]: ')
+host = raw_input('httpmail Host [localhost:3000]: ')
+
+if folder == '':
+    folder = 'INBOX'
+if host == '':
     host = 'localhost:3000'
+
 url = 'http://{0}/mailboxes/{1}/directories/{2}/'.format(
         host,
         urllib2.quote(user),
         urllib2.quote(folder))
 
 M = imaplib.IMAP4_SSL('secure.emailsrvr.com')
-M.login(user, getpass.getpass())
+M.login(user, getpass.getpass('IMAP Password: '))
 M.select(folder.replace('&', '&-'))
 typ, data = M.search(None, 'ALL')
 for num in data[0].split():

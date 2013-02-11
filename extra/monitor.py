@@ -2,19 +2,24 @@
 
 import sys
 import urllib2
-import getpass, imaplib2
+import getpass
+import imaplib2
 
-user = sys.argv[1]
-folder = sys.argv[2]
-try:
-    host = sys.argv[3]
-except IndexError:
+imap_host = raw_input('IMAPS Server: ')
+user = raw_input('IMAP Username: ')
+folder = raw_input('IMAP Folder [INBOX]: ')
+host = raw_input('httpmail Host [localhost:3000]: ')
+
+if folder == '':
+    folder = 'INBOX'
+if host == '':
     host = 'localhost:3000'
+
 url = 'http://{0}/mailboxes/{1}/directories/{2}/'.format(
         host,
         urllib2.quote(user),
         urllib2.quote(folder))
-password = getpass.getpass()
+password = getpass.getpass('IMAP Password: ')
 
 def migrate_set(ids):
     for num in ids.split():
