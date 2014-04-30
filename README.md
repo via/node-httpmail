@@ -28,29 +28,29 @@ specify any directories the message should be associated with.
 
 ### GET /mailboxes/`mailbox`/messages/
 
-Returns a JSON list of all messages in the mailbox.  Various headers
-are usable to filter the response:
+Returns a JSON list of all messages in the mailbox.  Message listings
+can be filtered using the `X-Filter` header. Valid fields to filter on:
 
 ```
-X-Filter-Tag
-X-Filter-Flag
-X-Filter-Bcc
-X-Filter-Body
-X-Filter-Subject
-X-Filter-Text
-X-Filter-To
-X-Filter-From
-X-Filter-Cc
-X-Filter-Header-`header`
+Tag
+Flag
+Bcc
+Body
+Subject
+Text
+To
+From
+Cc
+Size 
+Sent
+Stored
 ```
 
-Some filters may include qualifiers `>`, `<`, `=`, expressing
+Each filter requires a qualifier, such as `>`, `<`, `=`, expressing
 larger/later, smaller/earlier, and equal, respectively
-```
-X-Filter-Size 
-X-Filter-Sent
-X-Filter-Stored
-```
+
+In addition, the `X-Filter-Header` header may be used to match arbitrary
+message headers.
 
 Message listings can be sorted using the `X-Sort` header.
 Valid sorts, drawn from RFC5256:
@@ -64,13 +64,14 @@ Subject
 To
 ```
 
-Prefixing a sort parameter with ~ will reverse the sort.
+Prefixing a sort parameter with `~` will reverse the sort.
 
 Example:
 ```
-X-Filter-To: v@shitler.net
-X-Filter-Size: < 65535
-X-Sort: Subject  ~Arrival
+X-Filter: To = v@shitler.net
+X-Filter: Size < 65535
+X-Filter-Header: X-Spam-Check = Yes
+X-Sort: Subject ~Arrival
 ```
 
 ### PATCH /mailboxes/`mailbox`/messages/`id`
