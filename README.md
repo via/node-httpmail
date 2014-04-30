@@ -15,7 +15,7 @@ tag, respectively.
 
 Create a new tag.
 
-### DELETE /mailboxes/`mailbox`/tags/`tag``
+### DELETE /mailboxes/`mailbox`/tags/`tag`
 
 Deletes the tag, and any messages that are associated only with the one
 tag.
@@ -52,10 +52,7 @@ X-Filter-Sent
 X-Filter-Stored
 ```
 
-Message listings can be sorted using the `X-Sort` header:
-X-Sort: Subject ~Date
-
-
+Message listings can be sorted using the `X-Sort` header.
 Valid sorts, drawn from RFC5256:
 ```
 Arrival
@@ -73,7 +70,7 @@ Example:
 ```
 X-Filter-To: v@shitler.net
 X-Filter-Size: < 65535
-X-Sort: ~Arrival
+X-Sort: Subject  ~Arrival
 ```
 
 ### PATCH /mailboxes/`mailbox`/messages/`id`
