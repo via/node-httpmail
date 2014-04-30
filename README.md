@@ -1,42 +1,94 @@
 
 # API Documentation
 
-### GET /mailboxes/`mailbox`/directories/
+### GET /mailboxes/`mailbox`/tags/
 
-Returns a JSON list of directories for the mailbox.
+Returns a JSON list of tags for the mailbox.
 
-### GET /mailboxes/`mailbox`/directories/`dir`/
-
-Returns a JSON list of messages in the directory, sorted with the most recent
-messages appearing first.
-
-### HEAD /mailboxes/`mailbox`/directories/`dir`/
+### HEAD /mailboxes/`mailbox`/tags/`tag`/
 
 The headers `X-Total-Count` and `X-Unread-Count` contain the number of total
-messages in the directory and the number of unread messages in the directory,
-respectively.
+messages in the directory and the number of unread messages with the
+tag, respectively.
 
-### POST /mailboxes/`mailbox`/directories/`dir`/
+### PUT /mailboxes/`mailbox`/tags/`tag`
 
-Adds a new message to the directory. If given `message/rfc822` data, the raw
-message is parsed and stored. If given `application/json` data, it should be a
-mail object with the properties described by the
-[node-mailparser](https://github.com/andris9/mailparser) project.
+Create a new tag.
 
-### DELETE /mailboxes/`mailbox`/directories/`dir`
+### DELETE /mailboxes/`mailbox`/tags/`tag``
 
-Deletes the directory and all messages inside it.
+Deletes the tag, and any messages that are associated only with the one
+tag.
+
+### POST /mailboxes/`mailbox`/messages/
+
+Adds a new message to the directory.  The provided body should be of
+content-type `message/rfc822`.  Use the header `X-Message-Tag` to
+specify any directories the message should be associated with.  
+
+### GET /mailboxes/`mailbox`/messages/
+
+Returns a JSON list of all messages in the mailbox.  Various headers
+are usable to filter the response:
+
+```
+X-Filter-Tag
+X-Filter-Flag
+X-Filter-Bcc
+X-Filter-Body
+X-Filter-Subject
+X-Filter-Text
+X-Filter-To
+X-Filter-From
+X-Filter-Cc
+X-Filter-Header-`header`
+```
+
+Some filters may include qualifiers `>`, `<`, `=`, expressing
+larger/later, smaller/earlier, and equal, respectively
+```
+X-Filter-Size 
+X-Filter-Sent
+X-Filter-Stored
+```
+
+Message listings can be sorted using the `X-Sort` header:
+X-Sort: Subject ~Date
+
+
+Valid sorts, drawn from RFC5256:
+```
+Arrival
+CC
+Date
+From
+Size
+Subject
+To
+```
+
+Prefixing a sort parameter with ~ will reverse the sort.
+
+Example:
+```
+X-Filter-To: v@shitler.net
+X-Filter-Size: < 65535
+X-Sort: ~Arrival
+```
+
+### PATCH /mailboxes/`mailbox`/messages/`id`
+
+Sets tags for the message.  Use one or more `X-Message-Tag` headers to
+indicicate the tags.
 
 ### GET /mailboxes/`mailbox`/messages/`id`
 
-Fetches the message from storage. The result will be `application/json` data
-for an object as described by the
-[node-mailparser](https://github.com/andris9/mailparser) project.
+Fetches the message from storage. The result will be `message/rfc822`
+data for the raw mail message.
 
 ### DELETE /mailboxes/`mailbox`/messages/`id`
 
-Deletes the message from storage and removes its indices from the directory it
-was contained in.
+Deletes the message from storage.
 
 ### GET /mailboxes/`mailbox`/messages/`id`/flags/
 
