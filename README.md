@@ -84,6 +84,11 @@ indicicate the tags.
 Fetches the message from storage. The result will be `message/rfc822`
 data for the raw mail message.
 
+### HEAD /mailboxes/`mailbox`/messages/`id`
+
+Fetches the message headers from storage. The result will be `message/rfc822`
+data for the headers section of the raw mail message.
+
 ### DELETE /mailboxes/`mailbox`/messages/`id`
 
 Deletes the message from storage.
