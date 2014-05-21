@@ -23,61 +23,100 @@ tag.
 ### POST /mailboxes/`mailbox`/messages/
 
 Adds a new message to the directory.  The provided body should be of
-content-type `message/rfc822`.  Use the header `X-Message-Tag` to
-specify any directories the message should be associated with.  
+content-type `message/rfc822`.  Returns the message UUID as the body.
 
 ### GET /mailboxes/`mailbox`/messages/
 
-Returns a JSON list of all messages in the mailbox.  Message listings
-can be filtered using the `X-Filter` header. Valid fields to filter on:
+Returns a JSON list of all messages in the mailbox.  Result paging can
+be used by specifying `limit` and `skip` in the query string,
+representing how many messages to return and how far into the source
+list the results should start from.
 
+The parameters for filtering and sorting are provided in a JSON dictionary.
+Message filters can be added in a json list under the "filters" element:
+"filters": [{ "field": ...,
+  "qualifier":  ...,
+  "value": ...
+}]
+
+Field can be any of:
 ```
-Tag
-Flag
-Bcc
-Body
-Subject
-Text
-To
-From
-Cc
-Size 
-Sent
-Stored
-```
-
-Each filter requires a qualifier, such as `>`, `<`, `=`, expressing
-larger/later, smaller/earlier, and equal, respectively
-
-In addition, the `X-Filter-Header` header may be used to match arbitrary
-message headers.
-
-Message listings can be sorted using the `X-Sort` header.
-Valid sorts, drawn from RFC5256:
-```
-Arrival
-CC
-Date
-From
-Size
-Subject
-To
+tag
+flag
+bcc
+body
+subject
+text
+to
+from
+cc
+size 
+sent
+stored
 ```
 
-Prefixing a sort parameter with `~` will reverse the sort.
+Each filter requires a qualifier, `>`, `<`, `=`, expressing
+larger/later, smaller/earlier, and contains/equal, respectively
+
+In addition, the `Header` field may be used to match arbitrary
+message headers, specified by the additional attribute 'header' in the
+JSON dictionary.
+
+Message listings can be sorted using the `sort` key in the body:
+"sort": {
+  "field": ...,
+  "reverse": ...
+}
+
+Valid sort fields, drawn from RFC5256:
+```
+arrival
+cc
+date
+from
+size
+subject
+to
+```
+
+Specifying "reverse" as true will provide the result listing in reverse
+order.
 
 Example:
 ```
-X-Filter: To = v@shitler.net
-X-Filter: Size < 65535
-X-Filter-Header: X-Spam-Check = Yes
-X-Sort: Subject ~Arrival
+{
+  "filters": [
+    { "field": "to",
+      "qualifier": "=",
+      "value": "v@shitler.net"
+    },
+    { "field": "size",
+      "qualifier": "<",
+      "value": 65535
+    },
+    { "field": "header",
+      "header": "X-Spam-Check",
+      "qualifier": "=",
+      "value": "Yes"
+    } ],
+  "sort": {
+    "field": "arrival",
+    "reverse": True
+  }
+}
 ```
 
-### PATCH /mailboxes/`mailbox`/messages/`id`
+### GET /mailboxes/`mailbox`/messages/`id`/tags
 
-Sets tags for the message.  Use one or more `X-Message-Tag` headers to
-indicicate the tags.
+Returns a json list of tags the message is associated with.
+
+### PUT /mailboxes/`mailbox`/messages/`id`/tags/`tag`
+
+Sets the given tag for the message;
+
+### DELETE /mailboxes/`mailbox`/messages/`id`/tags/`tag`
+
+Unsets the given tag for the message.
 
 ### GET /mailboxes/`mailbox`/messages/`id`
 
